@@ -1,0 +1,20 @@
+# Exact tested versions (Python 3.13, macOS arm64) for reproducible installs.
+# For a flexible install use `pip install -e .` (bounds live in pyproject.toml).
+# Direct dependencies:
+numpy==2.4.6
+pandas==3.0.3
+scipy==1.17.1
+scikit-image==0.26.0
+scikit-learn==1.9.0
+tifffile==2026.6.1
+matplotlib==3.10.9
+statsmodels==0.14.6
+PyYAML==6.0.3
+# Key transitive pins (image IO / clustering / stats backends):
+imageio==2.37.3
+pillow==12.2.0
+networkx==3.6.1
+lazy-loader==0.5
+joblib==1.5.3
+threadpoolctl==3.6.0
+patsy==1.0.2

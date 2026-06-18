@@ -1,0 +1,34 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- virtual environments ---
+.venv/
+venv/
+env/
+
+# --- data & pipeline outputs (never commit; can be hundreds of MB) ---
+outputs/
+outputs_calib/
+outputs_phase2/
+*.tif
+*.tiff
+# Keep the small animal key that ships with the repo:
+!notebooks/animal_key.csv
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+notebooks/_build/
+
+# --- OS / editor cruft ---
+.DS_Store
+.idea/
+.vscode/
+*.swp

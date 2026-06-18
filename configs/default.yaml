@@ -1,0 +1,31 @@
+# Default configuration for the prion pipeline.
+# Copy this file, edit, and pass with `prion phase1 --config my_run.yaml`.
+# Any value here is overridden by an explicit command-line flag.
+
+# --- paths ---
+# data_dir is usually passed on the CLI (`--data`) instead of hard-coded here.
+# data_dir: /path/to/prion_images
+out_dir: outputs
+scale_table: outputs_calib/scale_table.csv
+# animal_key maps each image to an animal id; required for animal-level stats.
+# animal_key: notebooks/animal_key.csv
+
+# --- scale handling ---
+# null keeps each image's native µm/px (single-magnification cohort).
+# Set a value ONLY for a mixed-magnification cohort that must be standardised.
+target_um_per_px: null
+
+# --- segmentation ---
+# Fixed DAB optical-density cutoff so burden is comparable across images/groups.
+# Calibrate with `prion sweep`: a WT control should read ~0% burden.
+dab_threshold: 0.05
+min_object_um2: 50.0    # minimum object area (4x is low-res)
+min_peak_dist: 3        # watershed seed spacing in pixels
+
+# --- analysis ---
+n_morphotypes: 3
+random_state: 0
+
+# --- metadata vocabulary (matched against lower-cased filenames) ---
+regions: [cerebellum, hippocampus, midbrain, septum]
+mags: [4x]
