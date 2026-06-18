@@ -1,0 +1,13 @@
+# Conda / Anaconda users — create the environment, then install the tool:
+#   conda env create -f environment.yml
+#   conda activate prion
+#   pip install -e .
+#
+# (Dependencies are resolved by pip from pyproject.toml, so there is only one
+#  list to maintain. This file just provides a clean Python + pip environment.)
+name: prion
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10
+  - pip

@@ -7,6 +7,7 @@ All functions are pure (no plotting); :mod:`prion_pipeline.plots` renders them.
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -46,13 +47,17 @@ def assign_morphotypes(objs_df: pd.DataFrame, cfg: Config) -> MorphotypeResult |
     if not len(objs_df):
         return None
     md = objs_df.dropna(subset=MORPHO_FEATURES).copy()
-    if len(md) < cfg.n_morphotypes:
+    # Need at least n_morphotypes *distinct* shapes to form that many clusters;
+    # otherwise KMeans/PCA emit alarming-but-harmless warnings on degenerate input.
+    if md[MORPHO_FEATURES].drop_duplicates().shape[0] < cfg.n_morphotypes:
         return None
-    X = StandardScaler().fit_transform(md[MORPHO_FEATURES].values)
-    Z = PCA(n_components=2).fit_transform(X)
-    md["cluster"] = KMeans(
-        n_clusters=cfg.n_morphotypes, n_init=10, random_state=cfg.random_state
-    ).fit_predict(X)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")  # PCA divide / KMeans convergence chatter
+        X = StandardScaler().fit_transform(md[MORPHO_FEATURES].values)
+        Z = PCA(n_components=2).fit_transform(X)
+        md["cluster"] = KMeans(
+            n_clusters=cfg.n_morphotypes, n_init=10, random_state=cfg.random_state
+        ).fit_predict(X)
     order = md.groupby("cluster")["area_um2"].median().sort_values().index
     names = {
         lab: nm for lab, nm in zip(order, MORPHO_NAMES[: cfg.n_morphotypes])
@@ -199,10 +204,11 @@ def group_comparison(img_df: pd.DataFrame, cfg: Config) -> dict:
         if len(big) >= 2:
             H, p = stats.kruskal(*big)
             per_region[reg] = dict(H=float(H), p=float(p), groups=order)
-    note = "EXPLORATORY (image-level, pseudoreplicated)"
-    if mixedlm_error is not None:
-        note += f"; mixed-effects model unavailable ({mixedlm_error})"
-    return dict(method="kruskal", note=note, per_region=per_region)
+    note = ("Image-level comparison — exploratory only (the animal, not the "
+            "image, is the true experimental unit; treating images as "
+            "independent is pseudoreplication).")
+    return dict(method="kruskal", note=note, mixedlm_error=mixedlm_error,
+                per_region=per_region)
 
 
 # --- DAB-threshold calibration sweep --------------------------------------

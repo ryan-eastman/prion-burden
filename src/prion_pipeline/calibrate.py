@@ -84,11 +84,11 @@ def build_scale_table(
     Returns the table; also writes it to ``out_path`` (parent created as needed).
     """
     image_paths = discover_images(data_dir, exts)
+    # Pass explicit columns so an image-less directory still yields the schema
+    # (an empty DataFrame with no columns would KeyError on `um_per_px`).
     mt = pd.DataFrame(
-        [
-            dict(image=p.name, um_per_px=um_per_px_from_metadata(p))
-            for p in image_paths
-        ]
+        [dict(image=p.name, um_per_px=um_per_px_from_metadata(p)) for p in image_paths],
+        columns=["image", "um_per_px"],
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     mt.to_csv(out_path, index=False)

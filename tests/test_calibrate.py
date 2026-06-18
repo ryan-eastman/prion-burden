@@ -28,6 +28,14 @@ def test_um_per_px_nan_when_no_metadata(tmp_path):
     assert np.isnan(um_per_px_from_metadata(p))
 
 
+def test_build_scale_table_empty_dir_keeps_schema(tmp_path):
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    mt = build_scale_table(empty, tmp_path / "out.csv")
+    assert list(mt.columns) == ["image", "um_per_px"]  # no KeyError downstream
+    assert len(mt) == 0
+
+
 def test_build_scale_table_writes_csv(cohort_dir):
     data, _ = cohort_dir
     out = data.parent / "outputs_calib" / "scale_table.csv"
