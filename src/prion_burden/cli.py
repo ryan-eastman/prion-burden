@@ -219,7 +219,7 @@ def cmd_demo(args: argparse.Namespace) -> int:
     print("clearly more (~2-5%).")
     print(f"\nLook at the results in: {cfg.out_dir.resolve()}")
     print("\nNext, run it on your own images:")
-    print("  prion run --data /path/to/your/images --stats --plots")
+    print("  prion run --data /path/to/your/images")
     print("=" * 64)
     return 0
 
