@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "prion-ml-pipeline"
 version = "0.1.0"
-description = "CWD/prion PrP-burden quantification from IHC photomicrographs (Phase 0 calibrate + Phase 1 classical)."
+description = "Measure prion (PrP) burden in stained brain (IHC) images."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"

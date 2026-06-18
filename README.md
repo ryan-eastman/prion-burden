@@ -2,210 +2,228 @@
 
 [![CI](https://github.com/ryan-eastman/prion_ml_pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/ryan-eastman/prion_ml_pipeline/actions/workflows/ci.yml)
 
-Measure prion (PrP) burden in DAB/IHC brain photomicrographs and compare groups
-(deer / elk vs. control) — from a folder of `.tif` images to result tables and
-figures, with **one command** and no code editing.
+This tool measures prion (PrP) burden in stained brain images. You give it a
+folder of microscope images (`.tif` files), and it tells you, for each image,
+how much of the tissue is prion-positive, how many deposits there are, and the
+size and shape of those deposits. It can then compare your groups (for example,
+deer versus elk versus control). It runs on a normal laptop.
 
-You give it a folder of images; it gives you, per image: the **% of tissue that
-is PrP-positive**, how many deposits there are, their sizes/shapes, and group
-comparisons. CPU only — it runs on a normal laptop.
+You do not need to know how to write code to use it. You type a few short
+commands, which are all shown below.
 
----
+## What you need
+
+- A computer running Windows, macOS, or Linux.
+- Python version 3.10 or newer (3.11 or newer is best). Step 1 shows how to get it.
+- A folder of microscope images saved as `.tif` or `.tiff` files.
 
 ## Quick start
 
-### 1. Install Python (skip if you already have it)
+### Step 1. Install Python (skip if you already have it)
 
-You need **Python 3.10 or newer** (3.11+ recommended; the exact-reproducible
-install below requires 3.11+). If you don't have it, install it from
-[python.org/downloads](https://www.python.org/downloads/) (or
-[Anaconda](https://www.anaconda.com/download)). To check what you have:
-
-```bash
-python --version      # if that says "command not found", try: python3 --version
-```
-
-> On macOS/Linux the command is often **`python3`** (not `python`). Use whichever
-> one printed a version — substitute it everywhere below.
-
-### 2. Get the code
-
-This repository is **private**, so you need to be added as a collaborator and
-signed in to GitHub first (ask the maintainer for access). Then either:
-
-**Option A — download a ZIP (no Git needed).** On the repository's GitHub page,
-click the green **Code** button → **Download ZIP**, unzip it, and open a terminal
-in the unzipped folder.
-
-**Option B — clone with Git.** Requires Git ([git-scm.com/downloads](https://git-scm.com/downloads);
-on macOS the first `git` command may prompt you to install Apple's Command Line
-Tools — click Install):
+Get Python from [python.org/downloads](https://www.python.org/downloads/) or from
+[Anaconda](https://www.anaconda.com/download). To see if you already have it, open
+a terminal and type:
 
 ```bash
-git clone https://github.com/ryan-eastman/prion_ml_pipeline.git
-cd prion_ml_pipeline
+python --version
 ```
 
-### 3. Install it
+If that says "command not found", try `python3 --version` instead. On macOS and
+Linux the command is usually `python3`. Use whichever one shows a version number,
+and use that same word (`python` or `python3`) everywhere below.
+
+### Step 2. Get the code
+
+This project is private, so first ask the project owner to give you access, and
+sign in to your GitHub account. Then choose one of these:
+
+- **Download a ZIP (no extra software needed).** On the project's GitHub page,
+  click the green **Code** button, then **Download ZIP**. Unzip the file, then
+  open a terminal inside the unzipped folder.
+- **Or use Git.** Install Git from [git-scm.com/downloads](https://git-scm.com/downloads)
+  if you do not have it (on macOS, the first `git` command may offer to install
+  Apple's Command Line Tools, which is fine). Then run:
+
+  ```bash
+  git clone https://github.com/ryan-eastman/prion_ml_pipeline.git
+  cd prion_ml_pipeline
+  ```
+
+### Step 3. Install the tool
+
+First make a separate workspace for it (called a virtual environment):
 
 ```bash
-python -m venv .venv          # make an isolated environment (or: python3 -m venv .venv)
+python -m venv .venv
 ```
 
-Now **activate** it (this is the one command that differs by operating system):
+Then turn that workspace on. The command is different on each system:
 
-| Your computer | Command to activate |
+| Your computer | Command to turn it on |
 |---|---|
-| macOS / Linux | `source .venv/bin/activate` |
+| macOS or Linux | `source .venv/bin/activate` |
 | Windows (PowerShell) | `.venv\Scripts\Activate.ps1` |
 | Windows (Command Prompt) | `.venv\Scripts\activate.bat` |
 
-Then install:
+Finally, install the tool:
 
 ```bash
 pip install -e .
 ```
 
-That's it — you now have a `prion` command. (Using Anaconda instead of `venv`?
-See [Installing with conda](#installing-with-conda) below.)
+You now have a command called `prion`. (Prefer Anaconda? See
+[Install with conda](#install-with-conda) below.)
 
-### 4. Check it works — run the demo
+### Step 4. Check that it works
 
 ```bash
 prion demo
 ```
 
-This invents a tiny fake dataset and runs the whole pipeline on it, so you can
-confirm everything is installed correctly **without needing any of your own
-images yet**. It writes results into a new `prion_demo/` folder and prints the
-exact path.
+This makes a small set of example images and runs the whole tool on them, so you
+can confirm everything is installed correctly before using your own images. It
+saves the results in a new folder called `prion_demo` and prints the exact
+location.
 
-### 5. Run it on your own images
+### Step 5. Run it on your own images
 
-Put your `.tif`/`.tiff` images in a folder (sub-folders are fine), then:
+Put your `.tif` images in one folder (sub-folders are fine), then run:
 
 ```bash
-prion run --data /path/to/your/images --stats --plots
+prion run --data /path/to/your/images
 ```
 
-That single command reads the scale from each image, measures PrP burden and
-deposit shapes, compares groups, and saves figures. Results land in `outputs/`.
+That one command reads the scale from each image, measures the prion burden and
+the deposit shapes, compares your groups, and saves tables and figures. The
+results are saved in a folder called `outputs`.
 
-> **Tip — animal-level statistics.** Add `--animal-key animal_key.csv` if you
-> have a file linking each image to an animal. The CSV needs at least an `image`
-> column and an `animal` column (extra columns are ignored):
->
-> ```csv
-> image,animal
-> GtDeer_treatment_cerebellum_4x_01.tif,J2009
-> GtDeer_treatment_cerebellum_4x_02.tif,J2065
-> ```
->
-> A ready-made example ships at [`notebooks/animal_key.csv`](notebooks/animal_key.csv).
-> Without it, group comparisons are image-level and exploratory only.
+To get stronger statistics, add an animal key file that links each image to an
+animal (see the next section):
 
----
+```bash
+prion run --data /path/to/your/images --animal-key animal_key.csv
+```
+
+## The animal key file (optional but recommended)
+
+Statistics are most reliable when each animal counts once, not each image. To do
+that, give the tool a simple spreadsheet (a `.csv` file) that lists, for each
+image, which animal it came from. It needs a column named `image` and a column
+named `animal`. Extra columns are ignored.
+
+```csv
+image,animal
+GtDeer_treatment_cerebellum_4x_01.tif,J2009
+GtDeer_treatment_cerebellum_4x_02.tif,J2065
+```
+
+A ready-made example is included at [`notebooks/animal_key.csv`](notebooks/animal_key.csv);
+you can open it in Excel and use it as a template.
 
 ## Understanding your results
 
-`prion run` writes results to an **`outputs/`** folder (change it with `--out`).
-If you ran `prion demo`, the same files are under **`prion_demo/outputs/`** (the
-demo prints the exact path). Either way you get two tables:
+`prion run` saves everything in a folder called `outputs` (change the name with
+`--out`). If you ran `prion demo`, the same files are inside `prion_demo/outputs`
+instead. You get two tables and a set of figures.
 
-**`per_image_summary.csv`** — one row per image:
+**`per_image_summary.csv`** has one row per image:
 
 | Column | What it means |
 |---|---|
-| `pct_area_burden` | **% of tissue that is PrP-positive** — the headline number. |
-| `n_objects` | How many separate PrP deposits were detected. |
-| `density_per_mm2` | Deposits per mm² of tissue. |
-| `mean_area_um2` | Average deposit size, in µm². |
-| `median_circularity` | How round the deposits are (1.0 = perfect circle). |
-| `um_per_px` | The image's scale (microns per pixel). |
-| `species`, `condition`, `region`, `animal` | Read from the file name / animal key. |
+| `pct_area_burden` | The percent of the tissue that is prion-positive. This is the main number. |
+| `n_objects` | How many separate deposits were found. |
+| `density_per_mm2` | Deposits per square millimeter of tissue. |
+| `mean_area_um2` | Average deposit size, in square microns. |
+| `median_circularity` | How round the deposits are (1.0 is a perfect circle). |
+| `um_per_px` | The image scale (microns per pixel). |
+| `species`, `condition`, `region`, `animal` | Read from the file name and the animal key. |
 
-The CSV also includes `image`, `magnification`, `image_id`, `tissue_mm2` (measured
-tissue area), and `dab_threshold` (the cutoff used).
+The table also includes `image`, `magnification`, `image_id`, `tissue_mm2` (how
+much tissue was measured), and `dab_threshold` (the cutoff that was used).
 
-**`per_object_features.csv`** — one row per individual deposit (area, shape,
-location, and a `morphotype` label: *compact* / *intermediate* / *diffuse*).
+**`per_object_features.csv`** has one row for every single deposit: its size,
+shape, location, and a shape type (compact, intermediate, or diffuse).
 
-With `--plots` you also get an `outputs/figures/` folder (burden by region,
-morphotype clusters, spatial clustering).
+The **`figures`** folder has charts of burden by brain region, the deposit shape
+types, and how clustered the deposits are.
 
----
+## Options
 
-## Common options
-
-You rarely need more than these. Run `prion run --help` for the full list.
+You usually do not need any of these. Type `prion run --help` to see them all.
 
 | Option | What it does |
 |---|---|
-| `--stats` | Print a statistical comparison of the groups. |
-| `--plots` | Save summary figures (PNG). |
-| `--animal-key FILE.csv` | Link images → animals for proper animal-level stats. |
-| `--dab-threshold 0.05` | How dark a pixel must be to count as PrP-positive. Higher = stricter. Use `prion sweep` to choose. |
-| `--out FOLDER` | Where to save results (default: `outputs`). |
+| `--animal-key FILE.csv` | Links each image to an animal for stronger statistics. |
+| `--out FOLDER` | Where to save the results (default is `outputs`). |
+| `--dab-threshold 0.05` | How dark a pixel must be to count as prion-positive. A higher number is stricter. Use `prion sweep` to help pick one. |
+| `--no-plots` | Do not save the figures. |
+| `--no-stats` | Do not print the group comparison. |
 
----
+## If something goes wrong
 
-## Troubleshooting
+**`prion: command not found`**: your workspace is turned off. Run the turn-on
+command from step 3 again. You need to do this each time you open a new terminal.
 
-**`prion: command not found`** — your environment isn't activated. Re-run the
-activate command from step 3 (you must do this each time you open a new terminal).
+**`No images found under ... check --data`**: the folder path is wrong, or the
+folder has no `.tif` or `.tiff` files. Check the path. Sub-folders are searched
+for you.
 
-**"No images found under … — check --data"** — the `--data` path is wrong, or the
-folder has no `.tif`/`.tiff` files. Double-check the path; sub-folders are searched
-automatically.
+**`--animal-key file does not exist`** or **`must have 'image' and 'animal'
+columns`**: check the file path, and make sure the spreadsheet has columns named
+exactly `image` and `animal` (see the example above).
 
-**"--animal-key file does not exist" / "must have 'image' and 'animal' columns"** —
-check the path you passed, and that the CSV has columns named exactly `image` and
-`animal` (see the example in step 5).
+**`some image(s) had no scale; their areas are in pixels`**: those images do not
+store a microns-per-pixel value, so their sizes cannot be converted to microns.
+Most results still work; only those images report sizes in pixels.
 
-**"… image(s) had no scale; their areas are in pixels"** — those images don't carry
-a microns-per-pixel value in their metadata, so sizes can't be converted to µm.
-Most measurements still work; areas for those images are just in pixels.
+**`some image(s) have animal=UNKNOWN`**: those images are not listed in your
+animal key file. Add them to include them in the animal-level statistics.
 
-**"… image(s) have animal=UNKNOWN"** — those images aren't listed in your
-`--animal-key` file (or you didn't pass one). Add them to enable animal-level stats.
+**`the animal-level model could not be fit`**: this happens when the groups are
+unbalanced (for example, every control is the same species). The tool
+automatically falls back to a simpler comparison. This is expected.
 
-**"the animal-level mixed-effects model could not be fit"** — your design is
-unbalanced/confounded (e.g. every control is the same species). The tool falls
-back to a simpler per-region test automatically; this is expected, not an error.
+## How it works
 
----
+`prion run` does two steps for you:
 
-## How it works (for the curious)
+1. **Read the scale.** It reads the microns-per-pixel value stored inside each
+   image. (`prion calibrate` does only this step.)
+2. **Measure and compare.** It separates the brown stain from the tissue,
+   measures how much is prion-positive, measures each deposit's size and shape,
+   sorts the deposits into shape types, and compares the groups. (`prion phase1`
+   does only this step.)
 
-Three steps, which `prion run` chains together for you:
+`prion sweep` is a helper that tries several brightness cutoffs on a few images
+so you can choose a good one.
 
-1. **Calibrate** (`prion calibrate`) — read microns-per-pixel from each TIFF's
-   metadata into a scale table.
-2. **Phase 1** (`prion phase1`) — separate brown DAB staining from tissue, measure
-   the PrP-positive area and each deposit's size/shape, cluster deposits into
-   morphotypes, and compare groups.
-3. (Optional) **Sweep** (`prion sweep`) — try a range of DAB thresholds on a few
-   control vs. treatment images to help you pick a good cutoff.
+The brightness cutoff is the same for every image on purpose, so that results
+can be compared fairly across images and groups.
 
-A *fixed* DAB threshold is used on purpose (not a per-image one) so that burden is
-comparable across images and groups.
+## Notes for careful analysis
 
----
+- The animal, not the image, is the true unit. Without an animal key, group
+  comparisons treat each image as independent, which is only a rough, exploratory
+  result.
+- A single fixed cutoff (not an automatic per-image one) keeps results comparable
+  across images and groups.
+- For publication-quality spatial statistics, use the R package `spatstat`
+  (`Kinhom` or `pcf`) with edge correction.
 
 ## Advanced
 
-### Configuration file
+### Settings file
 
-Every option has a sensible default. To keep settings in a file instead of typing
-flags, copy [`configs/default.yaml`](configs/default.yaml), edit it, and pass it:
+Every option has a sensible default. To keep your settings in a file instead of
+typing them each time, copy [`configs/default.yaml`](configs/default.yaml), edit
+it, and pass it with `--config`:
 
 ```bash
 prion run --data /path/to/images --config my_settings.yaml
 ```
 
-Precedence: built-in defaults → `--config` file → explicit command-line flags.
-
-### Installing with conda
+### Install with conda
 
 ```bash
 conda env create -f environment.yml
@@ -215,9 +233,9 @@ pip install -e .
 
 ### Exact, reproducible install
 
-`pip install -e .` resolves compatible dependency versions for your platform. For
-the *exact* versions this was validated against (lockfile; validated on Python
-3.13 / macOS arm64 — some pins require Python ≥ 3.11):
+`pip install -e .` picks dependency versions that fit your computer. To install
+the exact versions this was tested with (validated on Python 3.13; note that
+some of these versions require Python 3.11 or newer):
 
 ```bash
 pip install -r requirements.txt
@@ -226,22 +244,8 @@ pip install -e .
 
 ### Notebooks
 
-The original analysis notebooks are kept under [`notebooks/`](notebooks/) for
-reference (`pip install -e ".[notebooks]"` to run them). The `prion` package is
-the supported, deployable interface.
-
----
-
-## Notes on scientific rigour
-
-- The **animal** is the experimental unit. Without `--animal-key`, group
-  comparisons are image-level and **exploratory only** (pseudoreplicated).
-- A *fixed* DAB threshold (not per-image Otsu) keeps burden comparable across
-  images and groups.
-- For publication-grade spatial statistics, use R `spatstat` (`Kinhom` / `pcf`)
-  with edge correction rather than the bundled Ripley's L.
-- The GPU deep-learning stage (StarDist) from the original project is
-  intentionally **not** included here.
+The original analysis notebooks are in the [`notebooks/`](notebooks/) folder for
+reference. The `prion` command is the supported way to run the tool.
 
 ## For developers
 
@@ -250,9 +254,9 @@ pip install -e ".[dev]"
 pytest
 ```
 
-Cross-platform CI (Linux / macOS / Windows, Python 3.10–3.13) runs the suite on
+Automated tests run on Windows, macOS, and Linux (Python 3.10 through 3.13) on
 every push. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).

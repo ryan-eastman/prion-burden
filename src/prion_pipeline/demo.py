@@ -1,4 +1,4 @@
-"""Synthetic demo cohort — lets a new user verify their install with no data.
+"""Synthetic demo cohort - lets a new user verify their install with no data.
 
 ``make_synthetic_cohort`` writes a handful of small, labelled TIFFs (with an
 embedded scale and a matching animal key) that look enough like the real DAB/IHC
@@ -23,7 +23,7 @@ _DAB = 0.30
 # Default deposits for a single demo/test image: (row, col, radius), well apart.
 DEFAULT_BLOBS = [(30, 40, 8), (30, 110, 8), (85, 70, 8)]
 
-# (filename, species, condition, animal, n_blobs) — treatment carries more
+# (filename, species, condition, animal, n_blobs) - treatment carries more
 # deposits than control, so the demo reproduces the expected biology
 # (control low burden, treatment clearly elevated).
 _SPECS = [

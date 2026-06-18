@@ -1,6 +1,6 @@
 """Configuration for the prion pipeline.
 
-The original notebooks kept their parameters in a hand-edited "CONFIG — EDIT
+The original notebooks kept their parameters in a hand-edited "CONFIG - EDIT
 THIS CELL" block with absolute paths baked in. Here those same parameters live
 in a dataclass that can be loaded from a YAML file and overridden on the command
 line, so the pipeline runs unchanged on any machine.

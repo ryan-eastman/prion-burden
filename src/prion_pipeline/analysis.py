@@ -97,7 +97,7 @@ def ripley_L(
     """Ripley's ``L(r) - r`` for point pattern ``xy`` vs a CSR envelope.
 
     Returns ``(L_observed, env_low, env_high)`` or ``None`` if too few points.
-    Self-contained, no edge correction — use R ``spatstat`` (``Kinhom``/``pcf``)
+    Self-contained, no edge correction - use R ``spatstat`` (``Kinhom``/``pcf``)
     for publication-grade inhomogeneous spatial statistics.
     """
     from scipy.spatial import cKDTree
@@ -158,7 +158,7 @@ def spread_for_image(
 def group_comparison(img_df: pd.DataFrame, cfg: Config) -> dict:
     """Compare PrP burden across groups.
 
-    With ≥3 known animals, fits a mixed-effects model (animal = random effect) —
+    With ≥3 known animals, fits a mixed-effects model (animal = random effect) -
     the publication-valid analysis. Otherwise falls back to an image-level
     Kruskal-Wallis test per region, which is EXPLORATORY and pseudoreplicated.
     Returns a dict describing which path was taken and the result/text.
@@ -189,7 +189,7 @@ def group_comparison(img_df: pd.DataFrame, cfg: Config) -> dict:
                         summary=str(fit.summary()))
         except Exception as exc:  # e.g. rank-deficient/confounded design
             # The fixed-effects design can be collinear (species confounded with
-            # condition); don't crash — fall back to the exploratory test below.
+            # condition); don't crash - fall back to the exploratory test below.
             mixedlm_error = f"{type(exc).__name__}: {exc}"
 
     img_df = img_df.copy()
@@ -204,7 +204,7 @@ def group_comparison(img_df: pd.DataFrame, cfg: Config) -> dict:
         if len(big) >= 2:
             H, p = stats.kruskal(*big)
             per_region[reg] = dict(H=float(H), p=float(p), groups=order)
-    note = ("Image-level comparison — exploratory only (the animal, not the "
+    note = ("Image-level comparison - exploratory only (the animal, not the "
             "image, is the true experimental unit; treating images as "
             "independent is pseudoreplication).")
     return dict(method="kruskal", note=note, mixedlm_error=mixedlm_error,

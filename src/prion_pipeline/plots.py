@@ -102,5 +102,5 @@ def ripley(spread: dict, out_path: Path) -> Path:
     ax.set_xlabel("r (um)")
     ax.set_ylabel("L(r) - r")
     ax.legend()
-    ax.set_title(f"Ripley L — {spread['image']} (n={spread['n']}); above envelope = clustering")
+    ax.set_title(f"Ripley L - {spread['image']} (n={spread['n']}); above envelope = clustering")
     return _save(fig, out_path)

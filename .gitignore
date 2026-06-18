@@ -17,7 +17,7 @@ env/
 # --- data & pipeline outputs (never commit; can be hundreds of MB) ---
 outputs/
 outputs_calib/
-outputs_phase2/
+prion_demo/
 *.tif
 *.tiff
 # Keep the small animal key that ships with the repo:

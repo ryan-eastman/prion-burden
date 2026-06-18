@@ -47,14 +47,14 @@ def run_phase1(
     image_paths = discover_images(cfg.data_dir)
     if not image_paths:
         raise SystemExit(
-            f"No images found under {cfg.data_dir} — check --data."
+            f"No images found under {cfg.data_dir} - check --data."
         )
     scale = load_scale_table(cfg.scale_table)
     if scale:
         progress(f"Loaded {len(scale)} per-image scales from {cfg.scale_table}")
     else:
         progress(
-            f"No scale table at {cfg.scale_table} — run `prion calibrate` first; "
+            f"No scale table at {cfg.scale_table} - run `prion calibrate` first; "
             "areas will be reported in PIXELS."
         )
     animal_lookup = load_animal_key(cfg.animal_key)

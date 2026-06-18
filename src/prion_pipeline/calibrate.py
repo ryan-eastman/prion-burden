@@ -1,8 +1,8 @@
-"""Phase 0 — recover µm/px from TIFF metadata into a scale table.
+"""Phase 0 - recover µm/px from TIFF metadata into a scale table.
 
 Faithful port of ``00_calibrate_scalebars``. Tries, in order: Olympus SIS
 (``sis_metadata``, metres), OME-XML ``PhysicalSizeX``, ImageJ unit + resolution,
-then plain TIFF cm/inch resolution tags (often print DPI — verify before
+then plain TIFF cm/inch resolution tags (often print DPI - verify before
 trusting). Returns NaN when nothing usable is embedded.
 """
 
@@ -62,7 +62,7 @@ def um_per_px_from_metadata(path: Path) -> float:
                 num, den = xres.value
                 if num:
                     return _to_um(den / num, ij.get("unit"))
-            # 3) plain TIFF resolution in cm/inch (often print DPI — VERIFY)
+            # 3) plain TIFF resolution in cm/inch (often print DPI - VERIFY)
             unit = pg.tags.get("ResolutionUnit")
             if xres is not None and unit is not None and unit.value in (2, 3):
                 num, den = xres.value

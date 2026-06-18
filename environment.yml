@@ -1,4 +1,4 @@
-# Conda / Anaconda users — create the environment, then install the tool:
+# Conda / Anaconda users - create the environment, then install the tool:
 #   conda env create -f environment.yml
 #   conda activate prion
 #   pip install -e .

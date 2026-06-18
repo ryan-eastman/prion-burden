@@ -1,7 +1,7 @@
-"""Phase 1 — DAB segmentation and per-object morphometry.
+"""DAB segmentation and per-object morphometry.
 
 Faithful port of the segmentation/feature cells of
-``01_phase1_burden_morphometry``. CPU only; no training, no GPU.
+``01_phase1_burden_morphometry``. Runs on a normal computer (CPU).
 
 A fixed DAB optical-density cutoff (not a per-image Otsu) is used so that PrP
 burden is comparable across images and groups.

@@ -23,9 +23,9 @@ from .config import Config
 # --- shared options --------------------------------------------------------
 def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--data", dest="data_dir", type=Path,
-                   help="Image directory (searched recursively).")
+                   help="Folder with your .tif/.tiff images (sub-folders are included).")
     p.add_argument("--config", type=Path,
-                   help="YAML config file; CLI flags override its values.")
+                   help="Optional settings file (.yaml). Options you type override it.")
 
 
 def _build_config(args: argparse.Namespace, **overrides) -> Config:
@@ -49,7 +49,7 @@ def _validate_inputs(cfg: Config, *, check_animal_key: bool) -> int | None:
     from .discovery import discover_images
 
     if not discover_images(cfg.data_dir):
-        print(f"error: no .tif/.tiff images found under {cfg.data_dir} — check --data.",
+        print(f"error: no .tif/.tiff images found under {cfg.data_dir} - check --data.",
               file=sys.stderr)
         return 2
     if check_animal_key and cfg.animal_key is not None and not cfg.animal_key.exists():
@@ -170,20 +170,25 @@ def cmd_run(args: argparse.Namespace) -> int:
     from .calibrate import build_scale_table
     from .pipeline import run_phase1
 
-    print("Step 1/2: reading the scale (µm per pixel) from each image ...")
+    # Statistics and figures are ON by default for the one-command path; a user
+    # can turn them off with --no-stats / --no-plots.
+    do_stats = not args.no_stats
+    do_plots = not args.no_plots
+
+    print("Step 1 of 2: reading the scale (microns per pixel) from each image ...")
     mt = build_scale_table(cfg.data_dir, cfg.scale_table)
     got = int(mt["um_per_px"].notna().sum())
-    print(f"  scale found for {got}/{len(mt)} images -> {cfg.scale_table}")
+    print(f"  scale found for {got} of {len(mt)} images, saved to {cfg.scale_table}")
 
-    print("Step 2/2: measuring PrP burden + morphometry ...")
+    print("Step 2 of 2: measuring PrP burden and deposit shapes ...")
     result = run_phase1(cfg, do_morphotypes=not args.no_morphotypes)
-    _postprocess(cfg, result, do_stats=args.stats, do_plots=args.plots)
+    _postprocess(cfg, result, do_stats=do_stats, do_plots=do_plots)
 
-    print("\nAll done. Your results are here:")
+    print("\nAll done. Your results are saved here:")
     print(f"  per-image summary : {(cfg.out_dir / 'per_image_summary.csv').resolve()}")
     print(f"  per-object table  : {(cfg.out_dir / 'per_object_features.csv').resolve()}")
     print(f"  scale table       : {cfg.scale_table.resolve()}")
-    if args.plots:
+    if do_plots:
         print(f"  figures           : {(cfg.out_dir / 'figures').resolve()}")
     return 0
 
@@ -208,7 +213,7 @@ def cmd_demo(args: argparse.Namespace) -> int:
     _postprocess(cfg, result, do_stats=True, do_plots=not args.no_plots)
 
     print("\n" + "=" * 64)
-    print("The demo worked — your installation is good.")
+    print("The demo worked - your installation is good.")
     print("It ran the REAL pipeline on FAKE images. Note how the control")
     print("animals show low burden (~1%) and the 'treatment' animals show")
     print("clearly more (~2-5%).")
@@ -239,7 +244,7 @@ def cmd_sweep(args: argparse.Namespace) -> int:
     animal_lookup = load_animal_key(cfg.animal_key)
     pivot = threshold_sweep(image_paths, cfg, scale, animal_lookup, k=args.k)
     if pivot.empty:
-        print("No control/treatment images sampled — nothing to sweep.")
+        print("No control/treatment images sampled - nothing to sweep.")
         return 0
     print(pivot.round(3).to_string())
     if args.out:
@@ -256,60 +261,59 @@ def cmd_sweep(args: argparse.Namespace) -> int:
 
 # --- parser ----------------------------------------------------------------
 def _add_phase1_flags(p: argparse.ArgumentParser) -> None:
-    """Flags shared by the `phase1` and `run` subcommands."""
+    """Image-processing options shared by the `phase1` and `run` commands."""
     p.add_argument("--out", dest="out", type=Path, default=None,
-                   help="Output directory for CSVs/figures (default: outputs).")
+                   help="Folder to save results in (default: outputs).")
     p.add_argument("--scale-table", type=Path, default=None,
-                   help="Per-image µm/px table (default: outputs_calib/scale_table.csv).")
+                   help="Scale table from 'prion calibrate' (default: outputs_calib/scale_table.csv).")
     p.add_argument("--animal-key", type=Path, default=None,
-                   help="CSV mapping image -> animal id (enables animal-level stats).")
+                   help="CSV linking each image to an animal (turns on animal-level statistics).")
     p.add_argument("--dab-threshold", type=float, default=None,
-                   help="Fixed DAB optical-density cutoff (default 0.05; comparable across images).")
+                   help="How dark a pixel must be to count as PrP-positive (default 0.05).")
     p.add_argument("--min-object-um2", type=float, default=None,
-                   help="Minimum object area in µm^2 (default 50).")
+                   help="Smallest deposit to keep, in square microns (default 50).")
     p.add_argument("--target-um-per-px", type=float, default=None,
-                   help="Resample all images to this µm/px (only for MIXED magnification).")
+                   help="Resize all images to this scale (only for mixed magnification).")
     p.add_argument("--no-morphotypes", action="store_true",
-                   help="Skip KMeans morphotype clustering.")
-    p.add_argument("--stats", action="store_true",
-                   help="Print group comparison (mixed-effects if animal key, else Kruskal-Wallis).")
-    p.add_argument("--plots", action="store_true",
-                   help="Write QC/result figures to <out>/figures.")
+                   help="Skip grouping deposits into shape types.")
 
 
 _EXAMPLES = """\
-examples:
-  prion demo                              try it on built-in fake data (no setup)
-  prion run --data ./images               the usual one-command run
-  prion run --data ./images --animal-key animal_key.csv --stats --plots
-  prion calibrate --data ./images         just step 1 (read the scale)
-  prion phase1 --data ./images            just step 2 (needs a scale table)
+Examples:
+  prion demo                          Run on built-in example data to check the install.
+  prion run --data ./images           Run on your own images (saves tables and figures).
+  prion calibrate --data ./images     Only step 1 (read the scale from each image).
+  prion phase1 --data ./images        Only step 2 (needs a scale table first).
 
-New here? Run `prion demo` first to confirm everything works.
+If you are new, run 'prion demo' first to confirm everything works.
 """
 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="prion",
-        description="CWD/prion PrP-burden quantification (Phase 0 calibrate + Phase 1).",
+        description="Measure prion (PrP) burden in stained brain images.",
         epilog=_EXAMPLES,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument("--version", action="version", version=f"prion-ml-pipeline {__version__}")
     sub = p.add_subparsers(dest="command", metavar="<command>")
 
-    # demo — the recommended starting point
-    d = sub.add_parser("demo", help="Run the whole pipeline on built-in fake data (start here).")
+    # demo: the recommended starting point
+    d = sub.add_parser("demo", help="Run on built-in example data to check the install (start here).")
     d.add_argument("--out", type=Path, default=None,
-                   help="Where to put the demo data + results (default: ./prion_demo).")
-    d.add_argument("--no-plots", action="store_true", help="Skip writing demo figures.")
+                   help="Folder for the example data and results (default: ./prion_demo).")
+    d.add_argument("--no-plots", action="store_true", help="Do not save figures.")
     d.set_defaults(func=cmd_demo)
 
-    # run — one command: calibrate + phase1
-    r = sub.add_parser("run", help="One command: calibrate + Phase 1 on your images.")
+    # run: one command (calibrate + phase1), statistics and figures on by default
+    r = sub.add_parser("run", help="Measure your images in one step (recommended).")
     _add_common(r)
     _add_phase1_flags(r)
+    r.add_argument("--no-stats", action="store_true",
+                   help="Do not print the group comparison.")
+    r.add_argument("--no-plots", action="store_true",
+                   help="Do not save figures.")
     r.set_defaults(func=cmd_run)
 
     # calibrate
@@ -319,14 +323,18 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Output scale table CSV (default: outputs_calib/scale_table.csv).")
     c.set_defaults(func=cmd_calibrate)
 
-    # phase1
-    f = sub.add_parser("phase1", help="Step 2 only: burden, morphometry, morphotypes.")
+    # phase1: step 2 only; statistics and figures are opt-in here
+    f = sub.add_parser("phase1", help="Step 2 only: measure burden and deposit shapes.")
     _add_common(f)
     _add_phase1_flags(f)
+    f.add_argument("--stats", action="store_true",
+                   help="Also print a comparison of the groups.")
+    f.add_argument("--plots", action="store_true",
+                   help="Also save summary figures.")
     f.set_defaults(func=cmd_phase1)
 
     # sweep
-    s = sub.add_parser("sweep", help="Help choose the DAB threshold (control vs treatment).")
+    s = sub.add_parser("sweep", help="Help pick the DAB threshold by comparing control and treatment.")
     _add_common(s)
     s.add_argument("--scale-table", type=Path, default=None,
                    help="Per-image µm/px table (default: outputs_calib/scale_table.csv).")
