@@ -1,7 +1,7 @@
 """Tests for the beginner entry points: synthetic data, `demo`, and `run`."""
 
-from prion_pipeline.cli import build_parser, cmd_calibrate, cmd_demo, cmd_run, main
-from prion_pipeline.demo import make_synthetic_cohort
+from prion_burden.cli import build_parser, cmd_calibrate, cmd_demo, cmd_run, main
+from prion_burden.demo import make_synthetic_cohort
 
 
 def test_make_synthetic_cohort(tmp_path):

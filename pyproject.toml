@@ -3,7 +3,7 @@ requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "prion-ml-pipeline"
+name = "prion-burden"
 version = "0.1.0"
 description = "Measure prion (PrP) burden in stained brain (IHC) images."
 readme = "README.md"
@@ -38,11 +38,11 @@ dev = ["pytest>=7"]
 notebooks = ["jupytext>=1.16", "jupyterlab>=4"]
 
 [project.scripts]
-prion = "prion_pipeline.cli:main"
+prion = "prion_burden.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/ryan-eastman/prion_ml_pipeline"
-Issues = "https://github.com/ryan-eastman/prion_ml_pipeline/issues"
+Homepage = "https://github.com/ryan-eastman/prion-burden"
+Issues = "https://github.com/ryan-eastman/prion-burden/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,4 +1,4 @@
-"""prion_pipeline: measure prion (PrP) burden in stained brain images.
+"""prion_burden: measure prion (PrP) burden in stained brain images.
 
 A deployable, config-driven refactor of the original Jupyter notebooks:
 

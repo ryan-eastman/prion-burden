@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from prion_pipeline.config import Config
+from prion_burden.config import Config
 
 
 def test_defaults_reproduce_notebook():

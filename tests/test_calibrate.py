@@ -1,7 +1,7 @@
 import numpy as np
 import tifffile
 
-from prion_pipeline.calibrate import _to_um, build_scale_table, um_per_px_from_metadata
+from prion_burden.calibrate import _to_um, build_scale_table, um_per_px_from_metadata
 
 
 def test_to_um_units():

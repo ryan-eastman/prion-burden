@@ -1,8 +1,8 @@
 import numpy as np
 import tifffile
 
-from prion_pipeline.config import Config
-from prion_pipeline.discovery import (
+from prion_burden.config import Config
+from prion_burden.discovery import (
     discover_images,
     get_um_per_px,
     load_animal_key,
@@ -43,9 +43,9 @@ def test_parse_metadata_uses_animal_key():
     from pathlib import Path
 
     cfg = Config()
-    key = {"GtElk_treatment_cerebellum_4x_05": "J2009"}
+    key = {"GtElk_treatment_cerebellum_4x_05": "A001"}
     m = parse_metadata(Path("GtElk_treatment_cerebellum_4x_05.tif"), cfg, key)
-    assert m["animal"] == "J2009"
+    assert m["animal"] == "A001"
 
 
 def test_load_animal_key_keys_by_name_and_stem(tmp_path):

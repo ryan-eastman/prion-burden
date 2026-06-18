@@ -2,7 +2,7 @@
 
 Faithful ports of the morphotype-typing, Ripley's-L and group-comparison cells
 of ``01_phase1_burden_morphometry``, plus the DAB-threshold calibration sweep.
-All functions are pure (no plotting); :mod:`prion_pipeline.plots` renders them.
+All functions are pure (no plotting); :mod:`prion_burden.plots` renders them.
 """
 
 from __future__ import annotations

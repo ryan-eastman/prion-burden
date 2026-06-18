@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from prion_pipeline.cli import _build_config, build_parser, cmd_sweep
+from prion_burden.cli import _build_config, build_parser, cmd_sweep
 
 
 def _phase1_overrides(args):

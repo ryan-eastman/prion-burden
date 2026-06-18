@@ -1,6 +1,6 @@
-# prion_ml_pipeline
+# prion-burden
 
-[![CI](https://github.com/ryan-eastman/prion_ml_pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/ryan-eastman/prion_ml_pipeline/actions/workflows/ci.yml)
+[![CI](https://github.com/ryan-eastman/prion-burden/actions/workflows/ci.yml/badge.svg)](https://github.com/ryan-eastman/prion-burden/actions/workflows/ci.yml)
 
 This tool measures prion (PrP) burden in stained brain images. You give it a
 folder of microscope images (`.tif` files), and it tells you, for each image,
@@ -46,8 +46,8 @@ sign in to your GitHub account. Then choose one of these:
   Apple's Command Line Tools, which is fine). Then run:
 
   ```bash
-  git clone https://github.com/ryan-eastman/prion_ml_pipeline.git
-  cd prion_ml_pipeline
+  git clone https://github.com/ryan-eastman/prion-burden.git
+  cd prion-burden
   ```
 
 ### Step 3. Install the tool
@@ -114,8 +114,8 @@ named `animal`. Extra columns are ignored.
 
 ```csv
 image,animal
-GtDeer_treatment_cerebellum_4x_01.tif,J2009
-GtDeer_treatment_cerebellum_4x_02.tif,J2065
+GtDeer_treatment_cerebellum_4x_01.tif,A001
+GtDeer_treatment_cerebellum_4x_02.tif,A002
 ```
 
 A ready-made example is included at [`notebooks/animal_key.csv`](notebooks/animal_key.csv);

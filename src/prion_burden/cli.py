@@ -296,7 +296,7 @@ def build_parser() -> argparse.ArgumentParser:
         epilog=_EXAMPLES,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("--version", action="version", version=f"prion-ml-pipeline {__version__}")
+    p.add_argument("--version", action="version", version=f"prion-burden {__version__}")
     sub = p.add_subparsers(dest="command", metavar="<command>")
 
     # demo: the recommended starting point

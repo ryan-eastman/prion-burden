@@ -2,11 +2,11 @@
 
 import pandas as pd
 
-from prion_pipeline.analysis import group_comparison, threshold_sweep
-from prion_pipeline.calibrate import build_scale_table
-from prion_pipeline.config import Config
-from prion_pipeline.discovery import discover_images, load_animal_key, load_scale_table
-from prion_pipeline.pipeline import run_phase1
+from prion_burden.analysis import group_comparison, threshold_sweep
+from prion_burden.calibrate import build_scale_table
+from prion_burden.config import Config
+from prion_burden.discovery import discover_images, load_animal_key, load_scale_table
+from prion_burden.pipeline import run_phase1
 
 
 def _silent(_msg):  # swallow progress output in tests

@@ -1,7 +1,7 @@
 import numpy as np
 
-from prion_pipeline.config import Config
-from prion_pipeline.segment import (
+from prion_burden.config import Config
+from prion_burden.segment import (
     _remove_small_holes,
     _remove_small_objects,
     dab_channel,
