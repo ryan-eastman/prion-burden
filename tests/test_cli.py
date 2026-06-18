@@ -1,5 +1,7 @@
 """CLI wiring + config precedence (regression tests for the review findings)."""
 
+from pathlib import Path
+
 from prion_pipeline.cli import _build_config, build_parser, cmd_sweep
 
 
@@ -24,8 +26,8 @@ def test_yaml_values_survive_unset_flags(tmp_path):
         ["phase1", "--data", str(tmp_path), "--config", str(yaml)]
     )
     cfg = _build_config(args, **_phase1_overrides(args))
-    assert str(cfg.out_dir) == "/yaml/out"
-    assert str(cfg.scale_table) == "/yaml/scale.csv"
+    assert cfg.out_dir == Path("/yaml/out")
+    assert cfg.scale_table == Path("/yaml/scale.csv")
 
 
 def test_explicit_flag_overrides_yaml(tmp_path):
@@ -35,20 +37,20 @@ def test_explicit_flag_overrides_yaml(tmp_path):
         ["phase1", "--data", str(tmp_path), "--config", str(yaml), "--out", "/cli/out"]
     )
     cfg = _build_config(args, **_phase1_overrides(args))
-    assert str(cfg.out_dir) == "/cli/out"  # explicit flag wins
+    assert cfg.out_dir == Path("/cli/out")  # explicit flag wins
 
 
 def test_defaults_when_no_yaml_no_flag(tmp_path):
     args = build_parser().parse_args(["phase1", "--data", str(tmp_path)])
     cfg = _build_config(args, **_phase1_overrides(args))
-    assert str(cfg.out_dir) == "outputs"
-    assert str(cfg.scale_table) == "outputs_calib/scale_table.csv"
+    assert cfg.out_dir == Path("outputs")
+    assert cfg.scale_table == Path("outputs_calib/scale_table.csv")
 
 
 def test_calibrate_out_defaults_to_scale_table(tmp_path):
     args = build_parser().parse_args(["calibrate", "--data", str(tmp_path)])
     cfg = _build_config(args, data_dir=args.data_dir, scale_table=args.out)
-    assert str(cfg.scale_table) == "outputs_calib/scale_table.csv"
+    assert cfg.scale_table == Path("outputs_calib/scale_table.csv")
 
 
 def test_sweep_animal_key_is_wired(tmp_path):

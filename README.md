@@ -1,5 +1,7 @@
 # prion_ml_pipeline
 
+[![CI](https://github.com/ryan-eastman/prion_ml_pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/ryan-eastman/prion_ml_pipeline/actions/workflows/ci.yml)
+
 Quantify PrP (prion) burden in DAB/IHC photomicrographs of cervidized-mouse
 brain (CWD: GtDeer / GtElk treatment vs. WT control). This repository packages
 **Phase 0** (scale calibration) and **Phase 1** (classical, CPU-only burden +
